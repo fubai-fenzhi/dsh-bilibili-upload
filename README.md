@@ -1,52 +1,61 @@
 # dsh-bilibili-upload
 
-鎶婅棰戜粠 DSH 涓婁紶/缂栬緫鍒?B 绔欙紝搴曞眰鐢?[biliup](https://github.com/biliup/biliup) CLI銆?
-## 鍓嶆彁
+把视频从 DSH 上传/编辑到 B 站，底层用 [biliup](https://github.com/biliup/biliup) CLI。
 
-1. 瀹夎 biliup锛圵indows 鐢?`biliupR-*-x86_64-windows.zip`锛岃В鍘嬪嵆鐢級
-2. 鍦?biliup 鐩綍杩愯涓€娆?`biliup login`锛屾墜鏈烘壂鐮佺櫥褰曪紙鐢熸垚 `cookies.json`锛?3. 鎻掍欢榛樿鎸囧悜宸茶璺緞锛坄biliupPath` 鍙敼锛?
-## 宸ュ叿
+## 前提
+
+1. 安装 biliup（Windows 用 `biliupR-*-x86_64-windows.zip`，解压即用）
+2. 在 biliup 目录运行一次 `biliup login`，手机扫码登录（生成 `cookies.json`）
+3. 在插件配置里填 `biliupPath`（biliup 可执行文件路径），或设置 `BILIUP_PATH` 环境变量
+
+## 工具
 
 ### `bili_upload`
 
-| 鍙傛暟 | 璇存槑 |
+| 参数 | 说明 |
 |---|---|
-| `video` | 瑙嗛缁濆璺緞锛堝繀濉級 |
-| `title` | 鏍囬锛堝繀濉紝绾?80 瀛楀唴锛?|
-| `desc` | 绠€浠?|
-| `tags` | 鏍囩鏁扮粍锛岄粯璁ょ敤閰嶇疆 |
-| `cover` | 灏侀潰鍥剧粷瀵硅矾寰勶紙4:3 鎴?16:9锛?|
-| `tid` | 鍒嗗尯锛岄粯璁?188锛堢鎶€鈫掕绠楁満鎶€鏈級 |
-| `submit` | 鎻愪氦鎺ュ彛锛岄粯璁?**web**锛堝垎鍖烘槧灏勬洿鍑嗭紱app 浼氭妸 188 鍙樻垚 21锛?|
-| `onlySelf` | `true`锛堥粯璁わ級= 浠呰嚜宸卞彲瑙侊紱`false` = 鍏紑 |
-| `dryRun` | 鍙洖鏄惧懡浠わ紝涓嶄笂浼?|
+| `video` | 视频绝对路径（必填） |
+| `title` | 标题（必填，约 80 字内） |
+| `desc` | 简介 |
+| `tags` | 标签数组，默认用配置 |
+| `cover` | 封面图绝对路径（4:3 或 16:9） |
+| `tid` | 分区，默认 188（科技→计算机技术） |
+| `submit` | 提交接口，默认 **web**（分区映射更准；app 会映射成 21） |
+| `onlySelf` | `true`（默认）= 仅自己可见；`false` = 公开 |
+| `dryRun` | 只回显命令，不上传 |
 
 ### `bili_edit`
 
-鏀瑰凡涓婁紶绋夸欢鐨勬爣棰?鍒嗗尯/鏍囩/绠€浠?鍙鎬э紙璧?B 绔欏畼鏂圭紪杈戞帴鍙ｏ紝闇€瑕佹湰鏈?cookies锛夈€?
-- 瀹℃牳涓紙state -50锛変細鎷掔粷骞舵彁绀虹◢鍚庨噸璇?- 鏀瑰畬鑷姩鍥炶鐘舵€?
+改已上传稿件的标题/分区/标签/简介/可见性（走 B 站官方编辑接口，需要本机 cookies）。
+
+- 审核中（state -50）会拒绝并提示稍后重试
+- 改完自动回读状态
+
 ### `bili_check`
 
-妫€鏌?biliup 璺緞銆佺櫥褰?cookie锛涘彲閫変紶 BV 鍙风湅绋夸欢銆?
-## 闈㈡澘
+检查 biliup 路径、登录 cookie；可选传 BV 号看稿件。
 
-璁剧疆 鈫?鎻掍欢 鈫?**B 绔欎笂浼?*锛氬～瑙嗛/鏍囬/绠€浠?鏍囩/灏侀潰/鍒嗗尯锛屽嬀閫夊彲瑙佹€э紝涓€閿笂浼狅紱涓嬫柟鍙敼宸叉湁 BV 鐨勬爣棰?鍙鎬с€?
-璺敱锛歚/bili-upload/state`銆乣/bili-upload/upload`銆乣/bili-upload/edit`銆?
-## 閰嶇疆
+## 面板
+
+设置 → 插件 → **B 站上传**：填视频/标题/简介/标签/封面/分区，勾选可见性，一键上传；下方可改已有 BV 的标题/可见性。
+
+路由：`/bili-upload/state`、`/bili-upload/upload`、`/bili-upload/edit`。
+
+## 配置
 
 ```yaml
 - id: bili-upload
   name: dsh-bilibili-upload
   config:
-    biliupPath: 'E:\Tools\biliup\biliupR-v1.3.5-x86_64-windows\biliup.exe'
+    biliupPath: 'C:\path\to\biliup.exe'
     defaultTid: 188
-    defaultTags: [DeepSeek Harness, DSH, 鎻掍欢]
+    defaultTags: [DeepSeek Harness, DSH, 插件]
     defaultOnlySelf: true
     defaultSubmit: web
 ```
 
-## 瀹夊叏
+## 安全
 
-- cookie 鍙瓨鏈満锛坆iliup 鐩綍锛夛紝涓嶈繘浠撳簱
-- 榛樿浠呰嚜宸卞彲瑙侊紝閬垮厤璇叕寮€
-- 鍙敤浜庝綘鑷繁鐨勮处鍙凤紝閬靛畧 B 绔欐姇绋胯鑼?
+- cookie 只存本机（biliup 目录），不进仓库
+- 默认仅自己可见，避免误公开
+- 只用于你自己的账号，遵守 B 站投稿规范
