@@ -1,5 +1,6 @@
 - insert:
     - id: bili-upload
-      name: dsh-bili-upload
+      name: dsh-bilibili-upload
     - id: bili-upload-ui
-      name: dsh-bili-upload/ui-route
+      name: dsh-bilibili-upload/ui-route
+
