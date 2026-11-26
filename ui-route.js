@@ -14,8 +14,8 @@ export function apply(ctx) {
     kind: 'exact',
     path: '/bili-upload/state',
     resource: async () => Response.json({
-      biliup: existsSync(cfg.biliupPath),
-      cookies: existsSync(cfg.cookiePath),
+      biliup: Boolean(cfg.biliupPath) && existsSync(cfg.biliupPath),
+      cookies: Boolean(cfg.cookiePath) && existsSync(cfg.cookiePath),
       biliupPath: cfg.biliupPath,
     }),
   }));
@@ -28,9 +28,9 @@ export function apply(ctx) {
       try {
         const body = await request.json();
         if (!body.video || !body.title) return Response.json({ error: 'video/title required' }, { status: 400 });
-        if (!cfg.biliupPath) return Response.json({ error: '鏈厤缃?biliupPath锛堟彃浠堕厤缃垨 BILIUP_PATH锛? }, { status: 400 });
-        if (!existsSync(body.video)) return Response.json({ error: `瑙嗛涓嶅瓨鍦細${body.video}` }, { status: 400 });
-        if (body.cover && !existsSync(body.cover)) return Response.json({ error: `灏侀潰涓嶅瓨鍦細${body.cover}` }, { status: 400 });
+        if (!cfg.biliupPath) return Response.json({ error: '未配置 biliupPath（插件配置或 BILIUP_PATH）' }, { status: 400 });
+        if (!existsSync(body.video)) return Response.json({ error: `视频不存在：${body.video}` }, { status: 400 });
+        if (body.cover && !existsSync(body.cover)) return Response.json({ error: `封面不存在：${body.cover}` }, { status: 400 });
         const result = await uploadVideo({
           biliupPath: cfg.biliupPath,
           video: body.video,
@@ -82,4 +82,3 @@ export function apply(ctx) {
     },
   }));
 }
-
