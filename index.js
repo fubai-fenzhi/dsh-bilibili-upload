@@ -4,6 +4,7 @@ import { normalizeTags } from './lib/args.mjs';
 import { normalizeConfig } from './lib/config.mjs';
 import { editArchive, showArchive } from './lib/edit.mjs';
 import { runBiliup, uploadVideo } from './lib/upload.mjs';
+import { SKILL_REGISTRATION } from './lib/skill.mjs';
 
 export const name = 'dsh-bilibili-upload';
 export const inject = ['tools'];
@@ -167,4 +168,7 @@ export function apply(ctx, config) {
     },
     presentCall: present('检查 biliup 状态'),
   });
+
+  const skills = ctx.get('skills');
+  if (skills) ctx.effect(() => skills.register(SKILL_REGISTRATION));
 }
