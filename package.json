@@ -1,14 +1,14 @@
 {
-  "name": "dsh-bili-upload",
+  "name": "dsh-bilibili-upload",
   "version": "0.2.0",
   "type": "module",
   "description": "Upload and edit videos on Bilibili from DSH through biliup: title, description, tags, cover, partition, visibility, plus a settings panel.",
   "license": "MIT",
   "author": "fubai-fenzhi",
-  "homepage": "https://github.com/fubai-fenzhi/dsh-bili-upload#readme",
+  "homepage": "https://github.com/fubai-fenzhi/dsh-bilibili-upload#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fubai-fenzhi/dsh-bili-upload.git"
+    "url": "git+https://github.com/fubai-fenzhi/dsh-bilibili-upload.git"
   },
   "keywords": [
     "dsh",
@@ -53,3 +53,4 @@
     }
   }
 }
+
