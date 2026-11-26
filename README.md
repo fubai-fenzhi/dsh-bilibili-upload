@@ -41,6 +41,12 @@
 
 路由：`/bili-upload/state`、`/bili-upload/upload`、`/bili-upload/edit`。
 
+## 自带技能
+
+插件在运行时注册一个 `bilibili-upload` 技能（SKILL.md 流程）：agent 需要上传/编辑 B 站视频时会按需加载，不占常驻 token。
+
+技能内容：检查登录 → 收集标题/简介/标签/封面 → 默认仅自己可见 → 上传 → 回读 BV/状态 → 审核后编辑；含「别重复上传」「app 接口分区会映射错」等坑。
+
 ## 配置
 
 ```yaml
