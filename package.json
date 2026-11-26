@@ -1,0 +1,55 @@
+{
+  "name": "dsh-bili-upload",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "Upload and edit videos on Bilibili from DSH through biliup: title, description, tags, cover, partition, visibility, plus a settings panel.",
+  "license": "MIT",
+  "author": "fubai-fenzhi",
+  "homepage": "https://github.com/fubai-fenzhi/dsh-bili-upload#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fubai-fenzhi/dsh-bili-upload.git"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "bilibili",
+    "biliup",
+    "upload",
+    "video"
+  ],
+  "engines": {
+    "node": ">=18",
+    "dsh": ">=0.2.1-rc.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./ui-route": "./ui-route.js"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "ui-route.js",
+    "lib/*.mjs",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  }
+}
