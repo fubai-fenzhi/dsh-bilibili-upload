@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 
 import { normalizeConfig } from './lib/config.mjs';
 import { editArchive } from './lib/edit.mjs';
+import { routeRejection } from './lib/guard.mjs';
 import { uploadVideo } from './lib/upload.mjs';
 
 export const name = 'dsh-bilibili-upload-ui';
@@ -10,20 +11,37 @@ export const inject = ['webServer'];
 export function apply(ctx) {
   const cfg = normalizeConfig();
 
+  // These routes act with the owner's Bilibili cookies, so every request must
+  // pass the Connection Host/Origin and browser-authentication checks.
+  function denied(request) {
+    const status = routeRejection(ctx.get('connection'), request);
+    if (!status) return null;
+    return new Response(JSON.stringify({ error: '请求来源校验未通过' }), {
+      status,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
   ctx.effect(() => ctx.webServer.register({
     kind: 'exact',
     path: '/bili-upload/state',
-    resource: async () => Response.json({
-      biliup: Boolean(cfg.biliupPath) && existsSync(cfg.biliupPath),
-      cookies: Boolean(cfg.cookiePath) && existsSync(cfg.cookiePath),
-      biliupPath: cfg.biliupPath,
-    }),
+    resource: async (request) => {
+      const blocked = denied(request);
+      if (blocked) return blocked;
+      return Response.json({
+        biliup: Boolean(cfg.biliupPath) && existsSync(cfg.biliupPath),
+        cookies: Boolean(cfg.cookiePath) && existsSync(cfg.cookiePath),
+        biliupPath: cfg.biliupPath,
+      });
+    },
   }));
 
   ctx.effect(() => ctx.webServer.register({
     kind: 'exact',
     path: '/bili-upload/upload',
     resource: async (request) => {
+      const blocked = denied(request);
+      if (blocked) return blocked;
       if (request.method !== 'POST') return Response.json({ error: 'POST only' }, { status: 405 });
       try {
         const body = await request.json();
@@ -60,6 +78,8 @@ export function apply(ctx) {
     kind: 'exact',
     path: '/bili-upload/edit',
     resource: async (request) => {
+      const blocked = denied(request);
+      if (blocked) return blocked;
       if (request.method !== 'POST') return Response.json({ error: 'POST only' }, { status: 405 });
       try {
         const body = await request.json();
