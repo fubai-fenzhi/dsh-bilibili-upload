@@ -1,6 +1,6 @@
 {
   "name": "dsh-bilibili-upload",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "type": "module",
   "description": "Upload and edit videos on Bilibili from DSH through biliup: title, description, tags, cover, partition, visibility, plus a settings panel.",
   "license": "MIT",
