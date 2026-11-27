@@ -64,4 +64,5 @@
 
 - cookie 只存本机（biliup 目录），不进仓库
 - 默认仅自己可见，避免误公开
+- HTTP 路由（`/bili-upload/*`）先过 `ctx.connection.requestRejection` 的 Host/Origin 与浏览器身份校验，未通过直接返回 401/403
 - 只用于你自己的账号，遵守 B 站投稿规范
