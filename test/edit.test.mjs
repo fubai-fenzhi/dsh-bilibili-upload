@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { buildEditPayload, parseShowOutput } from '../lib/edit.mjs';
+import { buildEditPayload, classifyArchiveState, parseShowOutput } from '../lib/edit.mjs';
 
 const SHOW_OUTPUT = `2026-11-26 22:34:29  INFO biliup_cli::uploader: user: someone
 {
@@ -52,4 +52,21 @@ test('buildEditPayload keeps visibility when onlySelf is omitted', () => {
   const data = parseShowOutput(SHOW_OUTPUT);
   const payload = buildEditPayload(data.archive, data.videos, { title: 'x' });
   assert.equal(payload.is_only_self, 1);
+});
+
+test('classifyArchiveState: -50 是仅自己可见（已过审），不是可编辑态', () => {
+  const info = classifyArchiveState(-50);
+  assert.equal(info.kind, 'private-passed');
+  assert.equal(info.editable, false);
+  assert.match(info.hint, /创作中心/);
+});
+
+test('classifyArchiveState: -30 是审核中，不是已退回', () => {
+  const info = classifyArchiveState(-30);
+  assert.equal(info.kind, 'reviewing');
+  assert.equal(info.editable, false);
+});
+
+test('classifyArchiveState: 其他 state 仍可编辑', () => {
+  assert.equal(classifyArchiveState(0).editable, true);
 });
