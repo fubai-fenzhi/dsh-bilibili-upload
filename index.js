@@ -126,8 +126,10 @@ export function apply(ctx, config) {
       }
 
       const result = await editArchive({ biliupPath: cfg.biliupPath, cookiePath: cfg.cookiePath, bvid, overrides });
-      if (result.state === 'reviewing') return { text: `${bvid} 还在审核中（-50），B 站不允许编辑；审核通过后再试。` };
-      if (result.state === 'rejected') return { text: `${bvid} 已被退回（-30），请先在创作中心查看退回原因。` };
+      if (result.state === 'reviewing') return { text: `${bvid} 审核中（state=-30），B 站不接受修改；审核结束后再试。` };
+      if (result.state === 'private-passed') {
+        return { text: `${bvid} 仅自己可见（state=-50，已过审）：编辑接口对此状态返回 -400/21001，改不了；请在创作中心手动改可见性。` };
+      }
 
       const ok = result.code === 0;
       const lines = [ok ? `${bvid} 修改成功` : `${bvid} 修改失败（code ${result.code}：${result.message ?? ''}）`];
